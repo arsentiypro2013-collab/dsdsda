@@ -1,29 +1,29 @@
-import os
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from datetime import datetime
+import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'chat_key'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
+app.config['SECRET_KEY'] = 'chat_key!'
+socketio = SocketIO(app, cors_allowed_origins="*")  # Без async_mode!
 
 @app.route('/')
 def index():
-    return jsonify({"status": "Сервер чата готов для SocketIO!"})
+    return jsonify({"status": "Чат-сервер готов! Подключайтесь SocketIO."})
 
 @socketio.on('connect')
 def connect():
-    emit('status', {'msg': 'Подключён'})
+    emit('status', {'msg': 'Подключён к чату'})
 
 @socketio.on('message')
 def handle_message(data):
     timestamp = datetime.now().strftime('%H:%M')
-    msg = f"[{timestamp}] {data['name']}: {data['msg']}"
+    msg = f"[{timestamp}] {data.get('name', 'Anon')}: {data['msg']}"
     emit('message', msg, broadcast=True)
 
 @socketio.on('disconnect')
 def disconnect():
-    emit('status', {'msg': 'Пользователь отключился'}, broadcast=True)
+    emit('status', {'msg': 'Пользователь вышел'}, broadcast=True)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
