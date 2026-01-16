@@ -5,7 +5,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chat_key!'
-socketio = SocketIO(app, cors_allowed_origins="*")  # Без async_mode!
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')
 def index():
@@ -18,7 +18,8 @@ def connect():
 @socketio.on('message')
 def handle_message(data):
     timestamp = datetime.now().strftime('%H:%M')
-    msg = f"[{timestamp}] {data.get('name', 'Anon')}: {data['msg']}"
+    name = data.get('name', 'Anon')
+    msg = f"[{timestamp}] {name}: {data['msg']}"
     emit('message', msg, broadcast=True)
 
 @socketio.on('disconnect')
@@ -27,4 +28,4 @@ def disconnect():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=False)
+    socketio.run(app, host='0.0.0.0', port=port, debug=False, allow_unsafe_werkzeug=True)
