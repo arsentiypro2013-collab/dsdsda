@@ -1,14 +1,11 @@
 import os
-import eventlet
-eventlet.monkey_patch()  # Обязательно первым!
-
 from flask import Flask, jsonify
 from flask_socketio import SocketIO, emit
 from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'chat_key'
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
 
 @app.route('/')
 def index():
