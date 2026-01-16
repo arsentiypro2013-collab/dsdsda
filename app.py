@@ -2,6 +2,7 @@ import socket
 import tkinter as tk
 from threading import Thread
 from datetime import datetime
+import os
 
 SERVER_HOST = '194.67.206.24'  # Публичный IP хоста
 SERVER_PORT = 5002
@@ -10,6 +11,14 @@ NAME = input("Твоё имя: ")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((SERVER_HOST, SERVER_PORT))
 client.send(NAME.encode())
+
+
+if __name__ == '__main__':
+    import eventlet
+    eventlet.monkey_patch()
+    port = int(os.environ.get('PORT', 5000))
+    socketio.run(app, host='0.0.0.0', port=port)
+
 
 root = tk.Tk()
 root.title("Чат - Клиент")
@@ -39,3 +48,4 @@ def receive():
 Thread(target=receive, daemon=True).start()
 root.protocol("WM_DELETE_WINDOW", lambda: client.close() or root.quit())
 root.mainloop()
+
