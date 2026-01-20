@@ -56,6 +56,15 @@ def handle_message(data):
     emit('message', msg, broadcast=True)
 
 
+@socketio.on('voice')
+def handle_voice(data):
+    """
+    data: bytes (аудио-чанк).
+    Просто шлём всем остальным.
+    """
+    emit('voice', data, broadcast=True, include_self=False)
+
+
 @socketio.on('disconnect')
 def disconnect():
     emit('status', {'msg': 'Пользователь отключился'}, broadcast=True)
