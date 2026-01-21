@@ -59,8 +59,8 @@ def handle_message(data):
 @socketio.on('voice')
 def handle_voice(data):
     """
-    data: bytes (аудио-чанк).
-    Просто шлём всем остальным.
+    data: bytes (аудио-чанк от одного клиента).
+    Шлём всем остальным (включая тех, кто уже в голосе).
     """
     emit('voice', data, broadcast=True, include_self=False)
 
